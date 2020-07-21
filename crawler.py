@@ -43,6 +43,7 @@ targetCafe = "https://cafe.naver.com/dieselmania"
 driver = getDriver()
 driver.get(targetCafe)
 
+# 카페 검색어
 targetDesigner = "마르지엘라"
 
 WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner)
