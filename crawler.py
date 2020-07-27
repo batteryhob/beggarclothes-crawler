@@ -39,18 +39,31 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # 카페 검색 결과
 targetCafe = "https://cafe.naver.com/dieselmania"
+targetDesigners = ["마르지엘라", "아크네", "아워레가시"]
 
-driver = getDriver()
-driver.get(targetCafe)
 
-# 카페 검색어
-targetDesigner = "마르지엘라"
+for targetDesigner in targetDesigners:
 
-WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner)
-time.sleep(5)
-WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cafe-search"]/form/button'))).click()
-time.sleep(5)
+    driver = getDriver()
+    driver.get(targetCafe)
 
-driver.switch_to_frame('cafe_main')
-main = driver.find_element_by_id('main-area')
-print(main.text)
+    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner)
+    time.sleep(5)
+    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cafe-search"]/form/button'))).click()
+    time.sleep(5)
+
+    driver.switch_to_frame('cafe_main')
+
+    main = driver.find_element_by_id('main-area')
+    board = main.find_elements_by_class_name('article-board')[1]
+    elements = board.find_elements_by_tag_name('tr')
+
+    for element in elements:
+        tds = element.find_elements_by_class_name('td_article')   
+        for td in tds:
+            print("seq:{}".format(td.find_element_by_class_name('board-number').text)) # seq
+            print("text:{}".format(td.find_element_by_class_name('board-list').text)) # 디자이너 언급
+
+    
+
+    
