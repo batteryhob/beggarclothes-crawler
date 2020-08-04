@@ -5,6 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
+from dynamodb.crud import put_item
+
 #config 가져오기
 #config.read('/app/config.ini', encoding='utf-8')
 #config['NAVER']['ID']
@@ -39,11 +41,10 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # 카페 검색 결과
 targetCafe = "https://cafe.naver.com/dieselmania"
-targetDesigners = ["마르지엘라", "아크네", "아워레가시"]
-
+targetDesigners = [ "마르지엘라", "아워레가시", "아크네"]
 
 for targetDesigner in targetDesigners:
-
+    
     driver = getDriver()
     driver.get(targetCafe)
 
@@ -61,8 +62,9 @@ for targetDesigner in targetDesigners:
     for element in elements:
         tds = element.find_elements_by_class_name('td_article')   
         for td in tds:
-            print("seq:{}".format(td.find_element_by_class_name('board-number').text)) # seq
-            print("text:{}".format(td.find_element_by_class_name('board-list').text)) # 디자이너 언급
+            # print("seq:{}".format(td.find_element_by_class_name('board-number').text)) # seq
+            # print("text:{}".format(td.find_element_by_class_name('board-list').text)) # 디자이너 언급
+            put_item(td.find_element_by_class_name('board-number').text, '1', td.find_element_by_class_name('board-list').text)
 
     
 
