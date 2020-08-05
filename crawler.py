@@ -6,6 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from dynamodb.crud import put_item
+from dynamodb.crud import get_items
+
 
 #config 가져오기
 #config.read('/app/config.ini', encoding='utf-8')
@@ -41,17 +43,27 @@ from dynamodb.crud import put_item
 
 # 카페 검색 결과
 targetCafe = "https://cafe.naver.com/dieselmania"
-targetDesigners = [ "마르지엘라", "아워레가시", "아크네"]
+targetDesigners = get_items()
 
 for targetDesigner in targetDesigners:
     
+    print(targetDesigner[0])
+
     driver = getDriver()
     driver.get(targetCafe)
 
-    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner)
-    time.sleep(5)
+    
+    try:
+        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "SEOneBannerLayerCloseBtn"))).click()
+        time.sleep(2)
+    except:
+        pass
+    
+
+    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner[0])
+    time.sleep(2)
     WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cafe-search"]/form/button'))).click()
-    time.sleep(5)
+    time.sleep(2)
 
     driver.switch_to_frame('cafe_main')
 
@@ -64,7 +76,7 @@ for targetDesigner in targetDesigners:
         for td in tds:
             # print("seq:{}".format(td.find_element_by_class_name('board-number').text)) # seq
             # print("text:{}".format(td.find_element_by_class_name('board-list').text)) # 디자이너 언급
-            put_item(td.find_element_by_class_name('board-number').text, '1', td.find_element_by_class_name('board-list').text)
+            put_item(td.find_element_by_class_name('board-number').text, '1', targetDesigner[1], targetDesigner[0], td.find_element_by_class_name('board-list').text)
 
     
 
