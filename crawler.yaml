@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: crawler-1
 spec:
-  schedule: "*/30 * * * *"
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       template:
@@ -13,6 +13,8 @@ spec:
         spec:
           containers:
           - name: crawler-1
-            image: batteryho/crawler:0.1
-            # args: ["--mode", "1" ]
-          restartPolicy: OnFailure
+            image: batteryho/crawler:v0.4
+            imagePullPolicy: IfNotPresent
+            ports:
+            - containerPort: 8200
+          restartPolicy: Never

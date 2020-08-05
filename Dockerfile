@@ -34,6 +34,6 @@ RUN pip3 install pymysql
 ENV LC_ALL=C.UTF-8
 ENV PYTHONUNBUFFERED 0
 
-EXPOSE 4000
+EXPOSE 4002
 
 ENTRYPOINT ["python3", "/app/crawler.py"]
