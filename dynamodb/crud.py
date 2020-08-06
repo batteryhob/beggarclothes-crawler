@@ -26,7 +26,7 @@ def get_items():
     return rows
 
 
-def put_item(seq, community_seq, designer, tag, text):
+def put_item(seq, community_seq, designer, tag, text, datetext, viewtext):
     config = configparser.ConfigParser()
     config.read('/app/config.ini', encoding='utf-8')
     dynamodb = boto3.client('dynamodb', aws_access_key_id=config['AWS']['AccessKey'], aws_secret_access_key=config['AWS']['SecretKey'], region_name='ap-northeast-2')
@@ -39,7 +39,8 @@ def put_item(seq, community_seq, designer, tag, text):
             'designer':{'S': designer },
             'tag':{'S': tag },
             'text':{'S': text },
-            'date': {'S': datetime.today().strftime('%Y%m%d') },
+            'date': {'S': datetext },
+            'view': {'S': viewtext },
             'timestamp': {'S': datetime.today().strftime('%Y%m%d%H%M%S') }
             }
         ),

@@ -45,21 +45,17 @@ from dynamodb.crud import get_items
 targetCafe = "https://cafe.naver.com/dieselmania"
 targetDesigners = get_items()
 
+driver = getDriver()
+driver.get(targetCafe)
+try:
+    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "SEOneBannerLayerCloseBtn"))).click()
+    time.sleep(2)
+except:
+    pass
+
 for targetDesigner in targetDesigners:
-    
+
     print(targetDesigner[0])
-
-    driver = getDriver()
-    driver.get(targetCafe)
-
-    
-    try:
-        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "SEOneBannerLayerCloseBtn"))).click()
-        time.sleep(2)
-    except:
-        pass
-    
-
     WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner[0])
     time.sleep(2)
     WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cafe-search"]/form/button'))).click()
@@ -72,12 +68,16 @@ for targetDesigner in targetDesigners:
     elements = board.find_elements_by_tag_name('tr')
 
     for element in elements:
+        dates = element.find_elements_by_class_name('td_date') # 날짜
+        views = element.find_elements_by_class_name('td_view') # 조회수
+
         tds = element.find_elements_by_class_name('td_article')   
-        for td in tds:
+        for i in range(len(tds)):
             # print("seq:{}".format(td.find_element_by_class_name('board-number').text)) # seq
             # print("text:{}".format(td.find_element_by_class_name('board-list').text)) # 디자이너 언급
-            put_item(td.find_element_by_class_name('board-number').text, '1', targetDesigner[1], targetDesigner[0], td.find_element_by_class_name('board-list').text)
+            put_item(tds[i].find_element_by_class_name('board-number').text, '1', targetDesigner[1], targetDesigner[0], tds[i].find_element_by_class_name('board-list').text, dates[i].text, views[i].text)
 
-    
+    driver.switch_to.default_content()
+    time.sleep(2)
 
     
