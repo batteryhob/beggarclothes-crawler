@@ -1,20 +1,21 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: crawler-1
+  name: crawler-2
 spec:
-  schedule: "*/5 * * * *"
+  schedule: "*/30 * * * *"
   jobTemplate:
     spec:
       template:
         metadata:
           labels:
-            app: crawler-1
+            app: crawler-2
         spec:
           containers:
-          - name: crawler-1
-            image: batteryho/crawler:v0.6
+          - name: crawler-2
+            image: batteryho/crawler:v0.7
             imagePullPolicy: IfNotPresent
+            args: ["--community_seq", "2", "--community_url", "https://cafe.naver.com/casuallydressed"]
             ports:
             - containerPort: 8200
           restartPolicy: Never

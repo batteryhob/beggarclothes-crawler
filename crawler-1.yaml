@@ -1,0 +1,21 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: crawler-1
+spec:
+  schedule: "*/20 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: crawler-1
+        spec:
+          containers:
+          - name: crawler-1
+            image: batteryho/crawler:v0.7
+            imagePullPolicy: IfNotPresent
+            args: ["--community_seq", "1", "--community_url", "https://cafe.naver.com/dieselmania"]
+            ports:
+            - containerPort: 8200
+          restartPolicy: Never

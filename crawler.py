@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from dynamodb.crud import put_item
 from dynamodb.crud import get_items
 
+import argparse
 
 #config 가져오기
 #config.read('/app/config.ini', encoding='utf-8')
@@ -41,43 +42,57 @@ from dynamodb.crud import get_items
 
 # WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "log.login"))).click()
 
-# 카페 검색 결과
-targetCafe = "https://cafe.naver.com/dieselmania"
-targetDesigners = get_items()
 
-driver = getDriver()
-driver.get(targetCafe)
-try:
-    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "SEOneBannerLayerCloseBtn"))).click()
-    time.sleep(2)
-except:
-    pass
+if __name__ == "__main__":
 
-for targetDesigner in targetDesigners:
+    # parser로 변경
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--community_seq", type=str, help="community seq", required=True)
+    parser.add_argument("-u", "--community_url", type=str, help="community url", required=True)
+    args = parser.parse_args()
 
-    print(targetDesigner[0])
-    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner[0])
-    time.sleep(2)
-    WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cafe-search"]/form/button'))).click()
-    time.sleep(2)
+    # 카페 검색 결과
+    targetSeq = args.community_seq
+    targetCafe = args.community_url
 
-    driver.switch_to_frame('cafe_main')
+    print(targetSeq)
+    print(targetCafe)
 
-    main = driver.find_element_by_id('main-area')
-    board = main.find_elements_by_class_name('article-board')[1]
-    elements = board.find_elements_by_tag_name('tr')
+    targetDesigners = get_items()
 
-    for element in elements:
-        dates = element.find_elements_by_class_name('td_date') # 날짜
-        views = element.find_elements_by_class_name('td_view') # 조회수
+    driver = getDriver()
+    driver.get(targetCafe)
+    try:
+        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "SEOneBannerLayerCloseBtn"))).click()
+        time.sleep(2)
+    except:
+        pass
 
-        tds = element.find_elements_by_class_name('td_article')   
-        for i in range(len(tds)):
-            # print("seq:{}".format(td.find_element_by_class_name('board-number').text)) # seq
-            # print("text:{}".format(td.find_element_by_class_name('board-list').text)) # 디자이너 언급
-            put_item(tds[i].find_element_by_class_name('board-number').text, '1', targetDesigner[1], targetDesigner[0], tds[i].find_element_by_class_name('board-list').text, dates[i].text, views[i].text)
+    for targetDesigner in targetDesigners:
 
-    driver.switch_to.default_content()
-    time.sleep(2)
+        print(targetDesigner[0])
+        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'topLayerQueryInput'))).send_keys(targetDesigner[0])
+        time.sleep(2)
+        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cafe-search"]/form/button'))).click()
+        time.sleep(2)
+
+        driver.switch_to_frame('cafe_main')
+
+        main = driver.find_element_by_id('main-area')
+        board = main.find_elements_by_class_name('article-board')[1]
+        elements = board.find_elements_by_tag_name('tr')
+
+        for element in elements:
+            dates = element.find_elements_by_class_name('td_date') # 날짜
+            views = element.find_elements_by_class_name('td_view') # 조회수
+
+            tds = element.find_elements_by_class_name('td_article')   
+            for i in range(len(tds)):
+                # print("seq:{}".format(td.find_element_by_class_name('board-number').text)) # seq
+                # print("text:{}".format(td.find_element_by_class_name('board-list').text)) # 디자이너 언급
+                put_item(tds[i].find_element_by_class_name('board-number').text, targetSeq, targetDesigner[1], targetDesigner[0], tds[i].find_element_by_class_name('board-list').text, dates[i].text, views[i].text)
+
+        driver.switch_to.default_content()
+        time.sleep(2)
 
     

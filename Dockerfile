@@ -36,4 +36,4 @@ ENV PYTHONUNBUFFERED 0
 
 EXPOSE 4002
 
-ENTRYPOINT ["python3", "/app/crawler.py"]
+ENTRYPOINT ["python3", "/app/crawler.py", "--community_seq", "1", "--community_url", "https://cafe.naver.com/dieselmania" ]
