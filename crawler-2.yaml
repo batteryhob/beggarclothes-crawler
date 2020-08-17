@@ -13,7 +13,7 @@ spec:
         spec:
           containers:
           - name: crawler-2
-            image: batteryho/crawler:v0.7
+            image: batteryho/crawler:v0.8
             imagePullPolicy: IfNotPresent
             args: ["--community_seq", "2", "--community_url", "https://cafe.naver.com/casuallydressed"]
             ports:

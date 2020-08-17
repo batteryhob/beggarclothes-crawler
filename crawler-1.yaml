@@ -13,9 +13,9 @@ spec:
         spec:
           containers:
           - name: crawler-1
-            image: batteryho/crawler:v0.7
+            image: batteryho/crawler:v0.8
             imagePullPolicy: IfNotPresent
             args: ["--community_seq", "1", "--community_url", "https://cafe.naver.com/dieselmania"]
             ports:
-            - containerPort: 8200
+            - containerPort: 8100
           restartPolicy: Never
